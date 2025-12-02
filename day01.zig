@@ -2,13 +2,37 @@ const std = @import("std");
 const file = @embedFile("input01.txt");
 
 pub fn main() !void {
-    var buff = "";
+    var pos: i32 = 50;
+    var lines = std.mem.splitAny(u8, file, "\n");
+    var password: u32 = 0;
 
-    for (file) |c| {
-        if (c == '\n') {
-            std.debug.print("{s}", .{buff});
+    while (lines.next()) |line| {
+        std.debug.print("{s}\n", .{line});
+
+        if (line.len < 1) continue;
+
+        const n = try std.fmt.parseInt(i32, line[1..], 10);
+
+        if (std.mem.startsWith(u8, line, "R")) {
+            pos += n;
+
+            while (pos > 99) {
+                pos -= 100;
+            }
+            if (pos == 0) {
+                password += 1;
+            }
         } else {
-            buff += c;
+            pos -= n;
+
+            while (pos < 0) {
+                pos += 100;
+            }
+            if (pos == 0) {
+                password += 1;
+            }
         }
     }
+
+    std.debug.print("{}", .{password});
 }
