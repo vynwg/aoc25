@@ -1,5 +1,6 @@
 const std = @import("std");
 const file = @embedFile("input03.txt");
+const Tuple = struct { u32, usize };
 
 pub fn main() !void {
     var lines = std.mem.splitAny(u8, file, "\n");
@@ -8,25 +9,26 @@ pub fn main() !void {
     while (lines.next()) |line| {
         if (line.len < 1) continue;
 
-        var last: u64 = 0;
+        var last = [12]Tuple{ .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 }, .{ 0, 0 } };
 
-        for (line, 0..) |char, i| {
-            if (line.len == i + 1) break;
+        for (0..12) |n| {
+            const start = if (n > 0) last[n - 1][1] + 1 else 0;
+            const end = line.len - (11 - n);
 
-            const n1 = try std.fmt.parseInt(u8, &[_]u8{char}, 10);
+            for (line[start..end], start..) |char, i| {
+                const num = try std.fmt.parseInt(u8, &[_]u8{char}, 10);
 
-            for (line[(i + 1)..]) |char2| {
-                const n2 = try std.fmt.parseInt(u8, &[_]u8{char2}, 10);
-                const n = n1 * 10 + n2;
-
-                if (n > last) {
-                    last = n;
+                if (num > last[n][0]) {
+                    std.debug.print("{},{} ", .{ num, i });
+                    last[n][0] = num;
+                    last[n][1] = i;
                 }
             }
-        }
 
-        sum += last;
-        last = 0;
+            const num = last[n][0] * std.math.pow(u64, 10, 11 - n);
+            std.debug.print("{}\n", .{num});
+            sum += num;
+        }
     }
 
     std.debug.print("{}", .{sum});
