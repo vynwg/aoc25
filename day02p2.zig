@@ -1,5 +1,5 @@
 const std = @import("std");
-const file = @embedFile("input02.txt");
+const file = @embedFile("input02test.txt");
 
 pub fn main() !void {
     var lines = std.mem.splitAny(u8, file, "\n");
@@ -12,27 +12,10 @@ pub fn main() !void {
         if (range.len < 1) continue;
 
         var idx = std.mem.splitAny(u8, range, "-");
-        var i = try std.fmt.parseInt(u64, idx.next().?, 10);
+        const i = try std.fmt.parseInt(u64, idx.next().?, 10);
         const end = try std.fmt.parseInt(u64, idx.next().?, 10);
 
-        while (i <= end) {
-            var mag: u64 = std.math.log_int(u64, 10, i) + 1;
-
-            if (mag % 2 != 0) {
-                continue;
-            } else {
-                mag = std.math.pow(u64, 10, mag / 2);
-                const upper = @divTrunc(i, mag);
-                const lower = i - upper * mag;
-
-                if (upper == lower) {
-                    std.debug.print("{} {} {}\n", .{ upper, lower, i });
-                    sum += i;
-                }
-            }
-
-            i += 1;
-        }
+        for (i..end) |n| {}
     }
 
     std.debug.print("{}", .{sum});
